@@ -13,6 +13,7 @@
 from enlace import *
 import time
 import numpy as np
+import random
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -29,25 +30,28 @@ def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com1 = enlace('COM3')
-        
+        com3 = enlace('COM3')
+        com4 = enlace('COM4')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
-        com1.enable()
+        com3.enable()
+        com4.enable()
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("ON")
         #aqui você deverá gerar os dados a serem transmitidos. 
-        imageR = "./imgs/image.png"
-        imageW = "./imgs/recebidaCopia.png"
+        # imageR = "./imgs/image.png"
+        # imageW = "./imgs/recebidaCopia.png"
         #seus dados a serem transmitidos são uma lista de bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
-        
-        #txBuffer = imagem em bytes!
-    
-
-    
+        #===========THIS============
+        mLen = random.randint(10,30)
+        mensagem = ""
+        comandos = ["00FF", "00", "0F", "F0", "FF00", "FF"]
+        for i in range(mLen):
+            mensagem += comandos[random.randint(0,5)]
+        print("Mensagem:",mensagem)
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
-        print(len(imageR),"bytes vão ser enviados")   
+        print(len(mensagem)/2,"bytes vão ser enviados")   
         #finalmente vamos transmitir os tados. Para isso usamos a funçao sendData que é um método da camada enlace.
         #faça um print para avisar que a transmissão vai começar.
         #tente entender como o método send funciona!
@@ -55,12 +59,12 @@ def main():
           
           
   
-        txBuffer = open(imageR, 'rb').read()
-        com1.sendData(np.asarray(txBuffer))
+        txBuffer = mensagem
+        com3.sendData(np.asarray(txBuffer))
        
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # Tente entender como esse método funciona e o que ele retorna
-        txSize = com1.tx.getStatus()
+        txSize = com3.tx.getStatus()
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
         #Observe o que faz a rotina dentro do thread RX
         #print um aviso de que a recepção vai começar.
@@ -69,25 +73,26 @@ def main():
         #Veja o que faz a funcao do enlaceRX  getBufferLen
         #acesso aos bytes recebidos
         txLen = len(txBuffer)
-        rxBuffer, nRx = com1.getData(txLen)
-        print("Tamanho do buffer de chegada:",com1.rx.getBufferLen())
+        rxBuffer, nRx = com4.getData(txLen)
+        print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
-        SaveImage = open(imageW, 'wb')
-        SaveImage.write(rxBuffer)
-        SaveImage.close()
+        # SaveImage = open(imageW, 'wb')
+        # SaveImage.write(rxBuffer)
+        # SaveImage.close()
          
     
         # Encerra comunicação
         print("-------------------------")
         print("Comunicação encerrada")
         print("-------------------------")
-        com1.disable()
+        com3.disable()
+        com4.disable()        
         
     except Exception as erro:
         print("ops! :-\\")
         print(erro)
-        com1.disable()
-        
+        com3.disable()
+        com4.disable()        
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":
