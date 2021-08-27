@@ -71,7 +71,8 @@ def main():
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
         #Observe o que faz a rotina dentro do thread RX
         #print um aviso de que a recepção vai começar.
-        print("recebendo dados")
+        print("recebendo dados...")
+        start = time.time()
         #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
         #Veja o que faz a funcao do enlaceRX  getBufferLen
         #acesso aos bytes recebidos
@@ -79,7 +80,7 @@ def main():
         rxBuffer, nRx = com4.getData(txLen)
         print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
-        print("em:")
+        print("em:", time.time()-start,"s")
          
     
         # Encerra comunicação
