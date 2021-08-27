@@ -14,6 +14,9 @@ from enlace import *
 import time
 import numpy as np
 import random
+import binascii
+
+
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -49,7 +52,7 @@ def main():
         comandos = ["00FF", "00", "0F", "F0", "FF00", "FF"]
         for i in range(mLen):
             mensagem += comandos[random.randint(0,5)]
-        print("Mensagem:",mensagem)
+        print("Mensagem:",mensagem, "Tamanho da mensagem:",mLen)
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
         print(len(mensagem)/2,"bytes vão ser enviados")   
         #finalmente vamos transmitir os tados. Para isso usamos a funçao sendData que é um método da camada enlace.
@@ -59,7 +62,7 @@ def main():
           
           
   
-        txBuffer = mensagem
+        txBuffer = binascii.unhexlify(mensagem)
         com3.sendData(np.asarray(txBuffer))
        
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
@@ -76,9 +79,7 @@ def main():
         rxBuffer, nRx = com4.getData(txLen)
         print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
-        # SaveImage = open(imageW, 'wb')
-        # SaveImage.write(rxBuffer)
-        # SaveImage.close()
+        print("em:")
          
     
         # Encerra comunicação
