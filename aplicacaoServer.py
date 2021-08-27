@@ -33,13 +33,18 @@ def main():
         #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
         #Veja o que faz a funcao do enlaceRX  getBufferLen
         #acesso aos bytes recebidos
-        
-        txLen = len(com4.getData(3))
+        txLen, nRx = com4.getData(1)
+        txLen = int.from_bytes(txLen, "big")
         print(txLen)
-        # rxBuffer, nRx = com4.getData(txLen)
+        rxBuffer, nRx = com4.getData(txLen)
         print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
-        print("recebeu {}" .format(txLen))
-         
+        print("recebeu {}" .format(rxBuffer))
+        print("Enviando comprovação...")
+        lenBuffer =  (len(rxBuffer)).to_bytes(1, byteorder='big')
+        com4.sendData(np.asarray(lenBuffer))
+        com4.sendData(np.asarray(lenBuffer))
+        com4.sendData(np.asarray(lenBuffer))
+        print("Bytes recebidos:",lenBuffer)
     
         # Encerra comunicação
         print("-------------------------")

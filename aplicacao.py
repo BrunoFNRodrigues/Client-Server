@@ -59,10 +59,11 @@ def main():
         #tente entender como o método send funciona!
         #Cuidado! Apenas trasmitimos arrays de bytes! Nao listas!
         txBuffer = binascii.unhexlify(mensagem)
-        lenBuffer =  binascii.unhexlify("01")
+        lenBuffer =  (mBytes).to_bytes(1, byteorder='big')
         com3.sendData(np.asarray(lenBuffer))
-        # com3.sendData(np.asarray(txBuffer))
         print(lenBuffer)
+        time.sleep(10)
+        com3.sendData(np.asarray(txBuffer))
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # Tente entender como esse método funciona e o que ele retorna
         txSize = com3.tx.getStatus()
@@ -71,6 +72,10 @@ def main():
         #print um aviso de que a recepção vai começar.
         print("recebendo dados")
         start = time.time()
+        rxBuffer, nRx = com3.getData(1)
+        print("Tamanho do buffer de chegada:",com3.rx.getBufferLen())
+        print("recebeu {}" .format(rxBuffer))
+        print("em",time.time()-start,"s")
         #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
         #Veja o que faz a funcao do enlaceRX  getBufferLen
         #acesso aos bytes recebidos
