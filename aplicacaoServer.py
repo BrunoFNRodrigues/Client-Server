@@ -40,9 +40,8 @@ def main():
         print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
         print("Enviando comprovação...")
-        lenBuffer =  (len(rxBuffer)).to_bytes(1, byteorder='big')
-        com4.sendData(np.asarray(lenBuffer))
-        com4.sendData(np.asarray(lenBuffer))
+        lenBuffer =  (nRx).to_bytes(1, byteorder='big')
+        time.sleep(1)
         com4.sendData(np.asarray(lenBuffer))
         print("Bytes recebidos:",lenBuffer)
     

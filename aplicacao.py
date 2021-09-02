@@ -33,7 +33,7 @@ def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com3 = enlace('COM3')
+        com3 = enlace('COM5')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
