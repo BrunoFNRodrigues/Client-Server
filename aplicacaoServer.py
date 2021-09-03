@@ -35,12 +35,14 @@ def main():
         #acesso aos bytes recebidos
         txLen, nRx = com4.getData(1)
         txLen = int.from_bytes(txLen, "big")
-        print(txLen)
+        print("Bytes a serem recebidos:",txLen)
         rxBuffer, nRx = com4.getData(txLen)
+        comandos = rxBuffer.split(b'\x01')[0:-1]
         print("Tamanho do buffer de chegada:",com4.rx.getBufferLen())
-        print("recebeu {}" .format(rxBuffer))
+        print("Lista de comandos recebida:",comandos)
+        print("Quantidade de comandos:",len(comandos))
         print("Enviando comprovação...")
-        lenBuffer =  (nRx).to_bytes(1, byteorder='big')
+        lenBuffer =  (len(comandos)).to_bytes(1, byteorder='big')
         com4.sendData(np.asarray(lenBuffer))
         print("Bytes recebidos:",lenBuffer)
     
