@@ -41,7 +41,6 @@ def main():
         print("recebeu {}" .format(rxBuffer))
         print("Enviando comprovação...")
         lenBuffer =  (nRx).to_bytes(1, byteorder='big')
-        time.sleep(1)
         com4.sendData(np.asarray(lenBuffer))
         print("Bytes recebidos:",lenBuffer)
     

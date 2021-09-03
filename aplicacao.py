@@ -33,10 +33,11 @@ def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com3 = enlace('COM5')
+        com3 = enlace('COM3')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
+        start = time.time()
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("ON")
         #aqui você deverá gerar os dados a serem transmitidos. 
@@ -62,7 +63,7 @@ def main():
         lenBuffer =  (mBytes).to_bytes(1, byteorder='big')
         com3.sendData(np.asarray(lenBuffer))
         print(lenBuffer)
-        time.sleep(10)
+        time.sleep(0.01)
         com3.sendData(np.asarray(txBuffer))
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # Tente entender como esse método funciona e o que ele retorna
@@ -71,10 +72,10 @@ def main():
         #Observe o que faz a rotina dentro do thread RX
         #print um aviso de que a recepção vai começar.
         print("recebendo dados")
-        start = time.time()
         rxBuffer, nRx = com3.getData(1)
         print("Tamanho do buffer de chegada:",com3.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
+        print("sem erros:",(rxBuffer==lenBuffer))
         print("em",time.time()-start,"s")
         #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
         #Veja o que faz a funcao do enlaceRX  getBufferLen
