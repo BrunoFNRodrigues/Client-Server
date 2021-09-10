@@ -7,3 +7,14 @@ def Datagrama(tipo="", npacks=0, num_pack=0, file_id="", payload_len=0, error_pa
         return binascii.unhexlify(mensagem)
     else:
         mensagem = "00"+"0000"+str(npacks)+str(num_pack)+file_id+str(error_pack)+str(crc)+payload+eop
+
+def Pack(info):
+    
+    lista=[info[i:i+114] for i in range(0, len(info), 114)]
+
+
+
+
+    # pack = info[0:113]
+    # lista.append(pack)
+    return lista
