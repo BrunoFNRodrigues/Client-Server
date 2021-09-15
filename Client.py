@@ -26,14 +26,14 @@ from utils import *
 #use uma das 3 opcoes para atribuir à variável a porta usada
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM3"                  # Windows(variacao de)
+# serialName = "COM3"                  # Windows(variacao de)
 
 
 def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com3 = enlace('COM3')
+        com3 = enlace('COM4')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
@@ -49,25 +49,31 @@ def main():
 
         txBuffer = open(imageR, "rb").read()
         packs = Pack(txBuffer)
-        tamanho_pack = len(packs)
-        lenBuffer =  (tamanho_pack).to_bytes(1, byteorder='big')
+        lenPayload = len(packs)
+        lenPayload =  (lenPayload).to_bytes(1, byteorder='big')
 
-        handshake = True 
-        com3.sendData(np.asarray(lenBuffer))
-        time.sleep(0.1)
-        validacao, nrx = com3.getData(1)
+        handshake = 0
+        enviando = 1
+        estado = handshake
+        validacao = 0
 
-        while handshake:
-            if time.time()-start >= 5 and validacao != b'\x01':
+        while estado == handshake:
+            print("Enviando aperto de mão")
+            if time.time()-start >= 5 and validacao != lenPayload:
                 pergunta=input("Você quer continuar: ")
-                if pegunta == "s":
+                if pergunta == "s":
                     start = time.time()
+                    com3.sendData(np.asarray(Datagrama(tipo="handshake", payload=lenPayload)))
+                    time.sleep(0.01)
+                    validacao, nrx = com3.getData(1)
+                    print("Validação:", validacao == lenPayload)
+                    estado = enviando
                 elif pergunta == 'n':
+                    handshake = False
+                    estado = -1
                     com3.disable()
-            else:
-                handshake = False
-
-
+            elif time.time()-start < 5 and validacao == lenPayload:
+                estado = enviando
 
         for pack in packs:
             com3.sendData(np.asarray(pack))
