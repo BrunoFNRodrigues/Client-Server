@@ -59,8 +59,8 @@ def main():
         validacao = 0
 
         #Handshake
+        print("Enviando aperto de mão")
         while estado == handshake:
-            print("Enviando aperto de mão")
             if time.time()-start >= 5 and validacao != lenPayload:
                 pergunta=input("Você quer continuar: ")
                 if pergunta == "s":
@@ -76,16 +76,24 @@ def main():
                     com3.disable()
             elif time.time()-start < 5 and validacao == lenPayload:
                 estado = enviando
+     
+        while estado == enviando:
+            validado = True
+            for i in range(0,len(packs)):
+                if validado == True:
+                    com3.sendData(np.asarray(packs[i]))
+                    print("dado enviado", packs[i])
+                    time.sleep(0.01)
+                    validacao, nRx = com3.getData(15)
+                    validado = validacao == b'\x01'
+                else:
+                    print("Erro reenviando pacote:", i-1)
+                    com3.sendData(np.asarray(packs[i-1]))
+                    
 
-        for pack in packs:
-            com3.sendData(np.asarray(pack))
-            print("dado enviado", pack)
-            time.sleep(0.1)
-        
 
 
             
-
 
 
 
