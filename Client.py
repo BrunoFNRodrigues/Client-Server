@@ -52,11 +52,13 @@ def main():
         lenPayload = len(packs)
         lenPayload =  (lenPayload).to_bytes(1, byteorder='big')
 
+        #Estados
         handshake = 0
         enviando = 1
         estado = handshake
         validacao = 0
 
+        #Handshake
         while estado == handshake:
             print("Enviando aperto de mão")
             if time.time()-start >= 5 and validacao != lenPayload:

@@ -1,12 +1,10 @@
-import binascii
-import struct
-
 def Datagrama(tipo="", npacks=00, num_pack=00, file_id=00, payload_len=00, error_pack=00, last_pack=00, crc=00, payload=b''):
     eop = b'\xDE\xEE\xEE\x55'
     if tipo == "data":
-        mensagem = [1, 00, 00, npacks, num_pack, file_id, payload_len, error_pack, last_pack, crc, crc]
+        mensagem = [2, 00, 00, npacks, num_pack, payload_len, error_pack, last_pack, crc, crc]
         mensagem = bytes(mensagem)
-        mensagem = struct.pack('<B', 0)
+        mensagem += payload
+        mensagem += eop
         
     elif tipo == "handshake":
         mensagem = [1, 00, 00, npacks, num_pack, payload_len, error_pack, last_pack, crc, crc]
