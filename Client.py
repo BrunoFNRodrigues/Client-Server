@@ -33,7 +33,7 @@ def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com3 = enlace('COM4')
+        com3 = enlace('COM3')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
@@ -41,16 +41,15 @@ def main():
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("ON")
         #aqui você deverá gerar os dados a serem transmitidos. 
-        imageR = "./imgs/image.png"
-        imageW = "./imgs/recebidaCopia.png"
+        imageR = "D:/Faculdade/4_semestre/FisComp/Client-Server/imgs/image.png"
         #seus dados a serem transmitidos são uma lista de bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         #===========THIS============
 
         txBuffer = open(imageR, "rb").read()
         packs = Pack(txBuffer)
-        lenPayload = len(packs)
-        lenPayload =  (lenPayload).to_bytes(1, byteorder='big')
+        lenPayloadInt = len(packs)
+        lenPayload =  (lenPayloadInt).to_bytes(1, byteorder='big')
 
         #Estados
         handshake = 0
@@ -62,7 +61,7 @@ def main():
         print("Enviando aperto de mão")
         while estado == handshake:
             if time.time()-start >= 5 and validacao != lenPayload:
-                pergunta=input("Você quer continuar: ")
+                pergunta=input("Você quer continuar (s/n):")
                 if pergunta == "s":
                     start = time.time()
                     com3.sendData(np.asarray(Datagrama(tipo="handshake", payload=lenPayload)))
@@ -81,15 +80,21 @@ def main():
             validado = True
             for i in range(0,len(packs)):
                 if validado == True:
-                    com3.sendData(np.asarray(packs[i]))
-                    print("dado enviado", packs[i])
+                    print("Tamanho do pacote:",len(packs[i]))
+                    pacote = Datagrama(tipo="data", npacks=lenPayloadInt, num_pack=i, payload=packs[i])
+                    lenPack = len(pacote)
+                    lenPack =  (lenPack).to_bytes(1, byteorder='big')
+                    com3.sendData(np.asarray(Datagrama(tipo="data", payload=lenPack)))
+                    time.sleep(0.01)
+                    com3.sendData(np.asarray(pacote))
+                    print("Pacote {}/{} Enviado:".format(i, lenPayloadInt-1), pacote)
                     time.sleep(0.01)
                     validacao, nRx = com3.getData(15)
-                    validado = validacao == b'\x01'
+                    validado = validacao[10:11] == b'\x01'
                 else:
                     print("Erro reenviando pacote:", i-1)
                     com3.sendData(np.asarray(packs[i-1]))
-                    
+            estado = -1       
 
 
 
