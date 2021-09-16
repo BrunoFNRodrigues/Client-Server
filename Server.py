@@ -22,6 +22,7 @@ def main():
         PacksLen = int.from_bytes(txLen, "big")-1
         print("Recebendo dados...")
         num_pack = -1
+        num_pack_v = 0
         while num_pack != PacksLen:
             head, nRx = com4.getData(10)
             txLen = int.from_bytes(head[5:6], "big")
@@ -34,7 +35,8 @@ def main():
             print("Pacote {}/{} Enviado:".format(num_pack, PacksLen),package)
             time.sleep(0.01)
 
-            if num_pack == 1:
+            if num_pack == num_pack_v and eop == b'\xde\xee\xeeU':
+                num_pack_v += 1
                 com4.sendData(np.asarray(Datagrama(tipo="data", payload=b'\x01')))
             else:
                 com4.sendData(np.asarray(Datagrama(tipo="data", payload=b'\x00')))
