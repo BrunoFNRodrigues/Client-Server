@@ -13,7 +13,7 @@ def main():
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("ON")
         #aqui você deverá gerar os dados a serem transmitidos. 
-        imageW = "D:/Faculdade/4_semestre/FisComp/Client-Server/imgs/recebidaCopia.png"
+        imageW = "./imgs/recebidaCopia.png"
         SaveImage = open(imageW, 'wb')
         BufferRx, nrx = com4.getData(15)
         txLen = BufferRx[10:11]
@@ -23,18 +23,22 @@ def main():
         print("Recebendo dados...")
         num_pack = -1
         while num_pack != PacksLen:
-            BufferRx, nRx = com4.getData(15)
-            txLen = int.from_bytes(BufferRx[10:11], "big")
-            print("txLen:",txLen)
+            head, nRx = com4.getData(10)
+            txLen = int.from_bytes(head[5:6], "big")
+            print("txLen",txLen)
+
             package, nRx = com4.getData(txLen)
-            num_pack = int.from_bytes(package[4:5], "big")
-            print("Pacote {}/{} Enviado:".format(num_pack, PacksLen),package[10:txLen])
+            eop, nRx = com4.getData(4)
+            print("EOP", eop)
+            num_pack = int.from_bytes(head[4:5], "big")
+            print("Pacote {}/{} Enviado:".format(num_pack, PacksLen),package)
             time.sleep(0.01)
-            if 1 == 1:
+
+            if num_pack == 1:
                 com4.sendData(np.asarray(Datagrama(tipo="data", payload=b'\x01')))
             else:
                 com4.sendData(np.asarray(Datagrama(tipo="data", payload=b'\x00')))
-            SaveImage.write(package[10:txLen-4])
+            SaveImage.write(package)
 
         SaveImage.close()
     

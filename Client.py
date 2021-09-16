@@ -33,7 +33,7 @@ def main():
     try:
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com3 = enlace('COM3')
+        com3 = enlace('COM5')
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
@@ -41,7 +41,7 @@ def main():
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("ON")
         #aqui você deverá gerar os dados a serem transmitidos. 
-        imageR = "D:/Faculdade/4_semestre/FisComp/Client-Server/imgs/image.png"
+        imageR = "D:/Faculdade/4_Semestre/FisComp/Client-Server/imgs/image.png"
         #seus dados a serem transmitidos são uma lista de bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         #===========THIS============
@@ -79,15 +79,15 @@ def main():
             for i in range(0,len(packs)):
                 if validado == True:
                     print("Tamanho do pacote:",len(packs[i]))
-                    pacote = Datagrama(tipo="data", npacks=lenPayloadInt, num_pack=i, payload=packs[i])
-                    lenPack = len(pacote)
-                    lenPack =  (lenPack).to_bytes(1, byteorder='big')
-                    com3.sendData(np.asarray(Datagrama(tipo="data", payload=lenPack)))
-                    time.sleep(0.01)
+                    pacote = Datagrama(tipo="data", npacks=lenPayloadInt, num_pack=i, payload_len=len(packs[i]), payload=packs[i])
+
                     com3.sendData(np.asarray(pacote))
+
                     print("Pacote {}/{} Enviado:".format(i, lenPayloadInt-1), pacote)
-                    time.sleep(0.01)
+                    time.sleep(0.1)
                     validacao, nRx = com3.getData(15)
+
+                    print( validacao[10:11])
                     validado = validacao[10:11] == b'\x01'
                 else:
                     print("Erro reenviando pacote:", i)
