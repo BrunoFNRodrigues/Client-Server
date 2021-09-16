@@ -60,20 +60,18 @@ def main():
         #Handshake
         print("Enviando aperto de mão")
         while estado == handshake:
-            if time.time()-start >= 5 and validacao != lenPayload:
+            if validacao != lenPayload:
                 pergunta=input("Você quer continuar (s/n):")
                 if pergunta == "s":
-                    start = time.time()
                     com3.sendData(np.asarray(Datagrama(tipo="handshake", payload=lenPayload)))
                     time.sleep(0.01)
-                    validacao, nrx = com3.getData(1)
+                    validacao, nrx = com3.getData(1, 5)
                     print("Validação:", validacao == lenPayload)
-                    estado = enviando
                 elif pergunta == 'n':
                     handshake = False
                     estado = -1
                     com3.disable()
-            elif time.time()-start < 5 and validacao == lenPayload:
+            elif validacao == lenPayload:
                 estado = enviando
      
         while estado == enviando:
@@ -92,8 +90,8 @@ def main():
                     validacao, nRx = com3.getData(15)
                     validado = validacao[10:11] == b'\x01'
                 else:
-                    print("Erro reenviando pacote:", i-1)
-                    com3.sendData(np.asarray(packs[i-1]))
+                    print("Erro reenviando pacote:", i)
+                    com3.sendData(np.asarray(packs[i]))
             estado = -1       
 
 
