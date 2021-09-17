@@ -15,10 +15,13 @@ def main():
         #aqui você deverá gerar os dados a serem transmitidos. 
         imageW = "./imgs/recebidaCopia.png"
         SaveImage = open(imageW, 'wb')
+
         BufferRx, nrx = com4.getData(15)
+        print(BufferRx)
         txLen = BufferRx[10:11]
         time.sleep(0.01)
         com4.sendData(np.asarray(txLen))
+
         PacksLen = int.from_bytes(txLen, "big")-1
         print("Recebendo dados...")
         num_pack = -1
