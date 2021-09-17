@@ -50,7 +50,7 @@ def main():
         mensagem = ""
         comandos = ["00FF", "00", "0F", "F0", "FF00", "FF"]
         for i in range(mLen):
-            mensagem += comandos[random.randint(0,5)]
+            mensagem += (comandos[random.randint(0,5)]+"01")
         print("Mensagem:",mensagem, "Tamanho da mensagem:",mLen)
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
         mBytes = int(len(mensagem)/2)
@@ -75,7 +75,7 @@ def main():
         rxBuffer, nRx = com3.getData(1)
         print("Tamanho do buffer de chegada:",com3.rx.getBufferLen())
         print("recebeu {}" .format(rxBuffer))
-        print("sem erros:",(rxBuffer==lenBuffer))
+        print("Sem erros:",(int.from_bytes(rxBuffer, "big")==mLen))
         print("em",time.time()-start,"s")
         #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
         #Veja o que faz a funcao do enlaceRX  getBufferLen
