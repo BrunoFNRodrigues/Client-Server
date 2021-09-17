@@ -59,6 +59,10 @@ def main():
 
         #Handshake
         print("Enviando aperto de mão")
+        com3.sendData(np.asarray(Datagrama(tipo="handshake", payload=lenPayload)))
+        time.sleep(0.01)
+        validacao, nrx = com3.getData(1, 5)
+        print("Validação:", validacao == lenPayload)
         while estado == handshake:
             if validacao != lenPayload:
                 pergunta=input("Você quer continuar (s/n):")
